@@ -1,16 +1,21 @@
 import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense
+from keras.layers import RNN
 from sklearn.model_selection import train_test_split
+from sklearn import preprocessing
+scaler =preprocessing.RobustScaler()
+
 #read in data using pandas
-train_df = pd.read_csv("train.csv")
+train_df = pd.read_csv("train.csv",index_col=0)
 #check data has been read in properly
 print(train_df.head())
 
-X = train_df.drop(columns=['final_result'])
 
+X = train_df.drop(columns=['final_result'])
+X=scaler.fit_transform(X)
 #check that the target variable has been removed
-print(X.head())
+
 
 #create a dataframe with only the target column
 y = train_df[['final_result']]
@@ -24,6 +29,7 @@ model = Sequential()
 
 #get number of columns in training data
 n_cols = X_train.shape[1]
+from keras.layers import Reshape
 
 #create model
 model = Sequential()
@@ -35,6 +41,9 @@ variables_for_classification=4
 model.add(Dense(250, activation='relu', input_shape=(n_cols,)))
 model.add(Dense(250, activation='relu'))
 model.add(Dense(250, activation='relu'))
+model.add(Dense(250, activation='relu'))
+model.add(Dense(250, activation='relu'))
+
 model.add(Dense(4, activation='softmax'))
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 #train model
